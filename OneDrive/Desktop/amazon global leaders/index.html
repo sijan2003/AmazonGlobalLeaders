@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon: The Customer-Centric Revolution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF9900;
+            --secondary: #146EB4;
+            --dark: #0a0e27;
+            --darker: #050815;
+            --light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(255, 153, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Gradient Background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1442 25%, #0f1729 50%, #1a0e2e 75%, #0a0e27 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Particle Canvas – subtle floating orange particles for atmosphere */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Glass Morphism UI */
+        .glass-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 15px 40px;
+            border-radius: 50px;
+            z-index: 1000;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-brand {
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #FF9900, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--glass-border);
+        }
+
+        .slide-indicator {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        /* Progress Ring – visual indicator of presentation progress */
+        .progress-ring {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            z-index: 1000;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke: var(--glass-border);
+            stroke-width: 4;
+        }
+
+        .progress-ring .progress {
+            stroke: var(--primary);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            filter: drop-shadow(0 0 8px var(--shadow));
+        }
+
+        /* Navigation Dots – quick jump to any slide */
+        .nav-dots {
+            position: fixed;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .nav-dot::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: var(--primary);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+        }
+
+        .nav-dot.active::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-dot.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--shadow);
+        }
+
+        /* Slides */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.9) translateY(50px);
+            padding: 60px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+            z-index: 10;
+        }
+
+        .slide-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* Typography */
+        .mega-title {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #FF9900 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -4px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .presenters {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .presented-by {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .presenter-names {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 8px;
+            background: linear-gradient(90deg, #ff9900, #ffc266);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+
+        .accent-text {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        h2.section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 60px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2.section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        /* Slide 1: Hero */
+        .hero-container {
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-animation {
+            width: 200px;
+            height: 80px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        @keyframes arrowSlide {
+            from {
+                transform: translateX(-20px) rotate(20deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) rotate(20deg);
+                opacity: 1;
+            }
+        }
+
+        .floating-hint {
+            margin-top: 80px;
+            padding: 12px 30px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Slide 2: Timeline – key milestones in Amazon's evolution */
+        .timeline-modern {
+            display: flex;
+            justify-content: space-between;
+            margin: 80px 0;
+            position: relative;
+        }
+
+        .timeline-modern::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 0;
+        }
+
+        .timeline-node {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: nodeAppear 0.6s forwards;
+        }
+
+        .timeline-node:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-node:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-node:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .timeline-node:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes nodeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .timeline-circle {
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 20px var(--shadow);
+            position: relative;
+        }
+
+        .timeline-circle::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s ease-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        .timeline-year {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-label {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        /* Stats Cards – animated counters showing scale */
+        .stats-showcase {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 80px;
+        }
+
+        .stat-glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .stat-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.6s ease;
+        }
+
+        .stat-glass:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-glass:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255, 153, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* Slide 3: Ecosystem Grid – Amazon's diversified business pillars */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .ecosystem-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ecosystem-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 153, 0, 0.1), rgba(20, 110, 180, 0.1));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+
+        .ecosystem-card:hover::after {
+            opacity: 1;
+        }
+
+        .ecosystem-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 30px 80px rgba(255, 153, 0, 0.3);
+        }
+
+        .ecosystem-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .ecosystem-card:hover .ecosystem-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .ecosystem-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .ecosystem-details {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .ecosystem-card:hover .ecosystem-details {
+            opacity: 1;
+            max-height: 200px;
+            margin-top: 15px;
+        }
+
+        /* Slide 4: Leadership – key figures and core philosophy */
+        .leadership-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .leaders-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .leader-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            transition: all 0.4s ease;
+        }
+
+        .leader-card:hover {
+            transform: translateX(10px);
+            border-color: var(--primary);
+        }
+
+        .leader-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            box-shadow: 0 10px 40px var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .leader-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .leader-role {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .leader-desc {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .philosophy-panel {
+            background: linear-gradient(135deg, rgba(255, 153, 0, 0.1), rgba(20, 110, 180, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--primary);
+            border-radius: 20px;
+            padding: 50px;
+        }
+
+        .philosophy-list {
+            list-style: none;
+        }
+
+        .philosophy-list li {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s forwards;
+        }
+
+        .philosophy-list li:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .philosophy-list li:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .philosophy-list li:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .philosophy-list li:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .philosophy-list li::before {
+            content: '▶';
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        /* Slide 5: Leadership Principles – core cultural values that guide decisions */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .principle-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            min-height: 200px;
+        }
+
+        .principle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: -1;
+        }
+
+        .principle-card:hover::before {
+            transform: translateY(0);
+        }
+
+        .principle-card:hover {
+            color: #000;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .principle-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .principle-desc {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .principle-example {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .principle-card:hover .principle-example {
+            opacity: 1;
+            max-height: 100px;
+            margin-top: 10px;
+        }
+
+        /* Slide 6: Technology Pipeline – how core technologies feed into each other */
+        .tech-pipeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 80px;
+        }
+
+        .tech-node {
+            text-align: center;
+            flex: 1;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: techAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .tech-node:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .tech-node:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .tech-node:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+
+        .tech-node:nth-child(4) {
+            animation-delay: 1.1s;
+        }
+
+        .tech-node:nth-child(5) {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes techAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tech-icon-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px var(--shadow);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .tech-icon-circle:hover {
+            transform: rotate(360deg);
+            box-shadow: 0 0 60px var(--shadow);
+        }
+
+        .tech-arrow {
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0;
+            animation: arrowFade 0.6s forwards;
+        }
+
+        .tech-arrow:nth-of-type(2) {
+            animation-delay: 0.4s;
+        }
+
+        .tech-arrow:nth-of-type(4) {
+            animation-delay: 1.0s;
+        }
+
+        @keyframes arrowFade {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .tech-label {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .tech-sublabel {
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Slide 7: Global Map – visual representation of worldwide operations */
+        .map-container {
+            width: 100%;
+            height: 500px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--primary);
+            animation: dotPulse 2s ease-in-out infinite, dotAppear 0.8s forwards;
+            opacity: 0;
+        }
+
+        @keyframes dotAppear {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.5);
+            }
+        }
+
+        .map-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200%;
+            height: 200%;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        .dot-1 {
+            top: 30%;
+            left: 20%;
+            animation-delay: 0.1s;
+        }
+
+        .dot-2 {
+            top: 25%;
+            left: 48%;
+            animation-delay: 0.2s;
+        }
+
+        .dot-3 {
+            top: 28%;
+            left: 52%;
+            animation-delay: 0.3s;
+        }
+
+        .dot-4 {
+            top: 70%;
+            left: 28%;
+            animation-delay: 0.4s;
+        }
+
+        .dot-5 {
+            top: 45%;
+            left: 70%;
+            animation-delay: 0.5s;
+        }
+
+        .dot-6 {
+            top: 35%;
+            left: 85%;
+            animation-delay: 0.6s;
+        }
+
+        .dot-7 {
+            top: 75%;
+            left: 83%;
+            animation-delay: 0.7s;
+        }
+
+        .global-metrics {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .metric-item {
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        .metric-item:nth-child(1) {
+            animation-delay: 1s;
+        }
+
+        .metric-item:nth-child(2) {
+            animation-delay: 1.2s;
+        }
+
+        .metric-item:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .metric-value {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        /* Slide 8: Challenges – balanced view of growth impact and ongoing issues */
+        .challenge-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 60px;
+        }
+
+        .challenge-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 50px;
+        }
+
+        .challenge-section.growth {
+            border-left: 4px solid #00ff88;
+        }
+
+        .challenge-section.issues {
+            border-left: 4px solid var(--primary);
+        }
+
+        .challenge-section h3 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .challenge-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .icon-check {
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .icon-warning {
+            background: rgba(255, 153, 0, 0.2);
+        }
+
+        /* Slide 9: Future – upcoming initiatives and long-term vision */
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .future-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .future-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 153, 0, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .future-card:hover::before {
+            opacity: 1;
+        }
+
+        .future-card:hover {
+            transform: translateY(-20px);
+            box-shadow: 0 30px 80px var(--shadow);
+        }
+
+        .future-icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .future-card h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .future-card p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+
+        .vision-quote {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-style: italic;
+            font-weight: 300;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Slide 10: Closing – final message and restart option */
+        .closing-hero {
+            text-align: center;
+        }
+
+        .closing-quote {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.3;
+            margin-bottom: 30px;
+        }
+
+        .closing-quote strong {
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .closing-cta {
+            margin-top: 80px;
+            opacity: 0;
+            animation: fadeIn 1.5s 1s forwards;
+        }
+
+        .restart-btn {
+            padding: 18px 50px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            font-family: inherit;
+        }
+
+        .restart-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.1);
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+
+            .ecosystem-grid,
+            .future-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .leadership-layout,
+            .challenge-split {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-pipeline {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .tech-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+
+            .slide {
+                height: auto;
+                min-height: 100vh;
+                position: relative;
+                padding: 100px 20px 80px;
+            }
+
+            .glass-nav {
+                top: 10px;
+                padding: 10px 20px;
+                gap: 15px;
+            }
+
+            .nav-dots,
+            .progress-ring {
+                display: none;
+            }
+
+            .stats-showcase,
+            .ecosystem-grid,
+            .principles-grid,
+            .future-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mega-title {
+                font-size: 3rem;
+            }
+
+            .map-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+    <div class="gradient-bg"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- Glass Navigation -->
+    <div class="glass-nav">
+        <div class="nav-brand">AMAZON</div>
+        <div class="nav-divider"></div>
+        <div class="slide-indicator">
+            <span id="current">01</span> / <span id="total">10</span>
+        </div>
+    </div>
+
+    <!-- Progress Ring -->
+    <div class="progress-ring">
+        <svg width="60" height="60">
+            <circle cx="30" cy="30" r="26"></circle>
+            <circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36">
+            </circle>
+        </svg>
+    </div>
+
+    <!-- Navigation Dots -->
+    <div class="nav-dots" id="navDots"></div>
+
+    <!-- Slides -->
+    <main id="presentation">
+
+        <!-- Slide 1: Introduction -->
+        <section class="slide active">
+            <div class="slide-content hero-container">
+                <div class="logo-animation">
+                    <div class="smile-curve"></div>
+                    <div class="arrow-tip"></div>
+                </div>
+                <h1 class="mega-title">AMAZON</h1>
+                <p class="subtitle">Building the World's Most <span class="accent-text">Customer-Centric</span> Company
+                </p>
+                <p style="font-size: 1.2rem; opacity: 0.7; margin-top: 20px;">From an Online Bookstore to a Global Tech
+                    Giant</p>
+                <!-- Presentation By -->
+                <div class="presenters">
+                    <p class="presented-by">Presentation by</p>
+                    <p class="presenter-names">
+                        Aayush Poudel · Nishchal Pandit · Sijan Kshetri
+                    </p>
+                </div>
+                <div class="floating-hint">← Use Arrow Keys to Navigate →</div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Historical Journey & Scale -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">The Journey</h2>
+                <div class="timeline-modern">
+                    <div class="timeline-node">
+                        <div class="timeline-circle"></div>
+                        <div class="timeline-year">1994</div>
+                        <div class="timeline-label">Founded</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Amazon was founded by Jeff Bezos in his garage in
+                            Bellevue, Washington, initially as an online bookstore called Cadabra. It was renamed Amazon
+                            after the world's largest river, symbolizing the company's ambition to become the largest
+                            bookstore on Earth.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-circle"></div>
+                        <div class="timeline-year">2006</div>
+                        <div class="timeline-label">AWS Launch</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Amazon Web Services (AWS) was launched, providing
+                            cloud computing services. It started with simple storage and compute services but grew to
+                            become the leading cloud platform, powering a significant portion of the internet.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-circle"></div>
+                        <div class="timeline-year">2015</div>
+                        <div class="timeline-label">Cloud Leader</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">By 2015, AWS had established itself as the market
+                            leader in cloud computing, surpassing competitors with its vast array of services and global
+                            infrastructure, contributing significantly to Amazon's profitability.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-circle"></div>
+                        <div class="timeline-year">2026</div>
+                        <div class="timeline-label">AI Revolution</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Amazon leads the AI revolution with advancements in
+                            generative AI, integrating it into AWS, Alexa, and logistics, further enhancing
+                            personalization and efficiency across its ecosystem.</p>
+                    </div>
+                </div>
+                <div class="stats-showcase">
+                    <div class="stat-glass">
+                        <div class="stat-number" data-target="310">0</div>
+                        <div class="stat-label">Million Customers</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Amazon serves over 310 million active customers
+                            worldwide, offering a vast selection of products with fast delivery options.</p>
+                    </div>
+                    <div class="stat-glass">
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">Countries</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Operating in more than 100 countries, Amazon has a
+                            truly global presence with localized websites and fulfillment centers.</p>
+                    </div>
+                    <div class="stat-glass">
+                        <div class="stat-number" data-target="1500">0</div>
+                        <div class="stat-label">K+ Employees</div><br>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Employing over 1.5 million people globally, Amazon
+                            is one of the world's largest employers, with roles in technology, logistics, and more.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Business Ecosystem -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">The Ecosystem</h2>
+                <div class="ecosystem-grid">
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">🛒</span>
+                        <h3>E-Commerce</h3>
+                        <p class="ecosystem-details">The world's largest online marketplace connecting millions of
+                            sellers and buyers globally. It offers everything from books to electronics, with features
+                            like customer reviews and personalized recommendations to enhance shopping experience.</p>
+                    </div>
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">☁️</span>
+                        <h3>AWS</h3>
+                        <p class="ecosystem-details">Leading cloud platform powering 33% of the internet with 200+
+                            services. AWS provides scalable computing, storage, databases, and AI tools, enabling
+                            businesses of all sizes to innovate without heavy infrastructure investments.</p>
+                    </div>
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">⚡</span>
+                        <h3>Prime</h3>
+                        <p class="ecosystem-details">Subscription flywheel: fast shipping, streaming, music, and
+                            exclusive deals. Prime membership builds customer loyalty by offering convenience and
+                            entertainment, driving repeat purchases and ecosystem engagement.</p>
+                    </div>
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">📱</span>
+                        <h3>Devices</h3>
+                        <p class="ecosystem-details">Alexa, Kindle, Fire TV, and Ring revolutionizing smart homes. These
+                            devices integrate AI for voice control, reading, streaming, and security, creating a
+                            connected home experience centered around Amazon services.</p>
+                    </div>
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">🎬</span>
+                        <h3>Media</h3>
+                        <p class="ecosystem-details">Prime Video, MGM Studios, Audible, and Twitch entertainment empire.
+                            This segment provides streaming video, audiobooks, and live gaming, competing with major
+                            entertainment companies and attracting millions of users.</p>
+                    </div>
+                    <div class="ecosystem-card">
+                        <span class="ecosystem-icon">🤖</span>
+                        <h3>Innovation</h3>
+                        <p class="ecosystem-details">Robotics, AI, Project Kuiper satellites, and autonomous delivery.
+                            These initiatives push technological boundaries, aiming to improve efficiency, expand
+                            internet access, and redefine logistics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Leadership & Philosophy -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">Leadership</h2>
+                <div class="leadership-layout">
+                    <div class="leaders-grid">
+                        <div class="leader-card">
+                            <div class="leader-avatar">
+                                <img src="https://i.guim.co.uk/img/media/ef573276855d9e04aaed3dae615757a8725e52d9/297_329_2974_1784/master/2974.jpg?width=1200&quality=85&auto=format&fit=max&s=2a0a69eadd93b8d9e32c5be435fafc6f"
+                                    alt="Jeff Bezos"
+                                    style="width:100%; height:100%; object-fit: cover; border-radius: 50%;">
+                            </div>
+                            <div class="leader-info">
+                                <h3>Jeff Bezos</h3>
+                                <p class="leader-role">Founder & Chairman</p>
+                                <p class="leader-desc">Jeff Bezos founded Amazon in 1994 as an online bookstore. Under
+                                    his leadership, it grew into a global empire. He pioneered customer obsession,
+                                    emphasizing long-term thinking over short-term profits, and invested heavily in
+                                    innovation like AWS. He stepped down as CEO in 2021 but continues as Executive
+                                    Chairman, influencing strategy.</p>
+                            </div>
+                        </div>
+                        <div class="leader-card">
+                            <div class="leader-avatar">
+                                <img src="https://static01.nyt.com/images/2023/08/14/multimedia/00jassy-fwqh/fwqh-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+                                    alt="Andy Jassy"
+                                    style="width:100%; height:100%; object-fit: cover; border-radius: 50%;">
+                            </div>
+                            <div class="leader-info">
+                                <h3>Andy Jassy</h3>
+                                <p class="leader-role">CEO</p>
+                                <p class="leader-desc">Andy Jassy joined Amazon in 1997 and founded AWS in 2006, growing
+                                    it into a multi-billion-dollar business. As CEO since 2021, he focuses on
+                                    operational excellence, cost optimization, and expanding AI capabilities across
+                                    Amazon's segments while maintaining the customer-centric culture.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="philosophy-panel">
+                        <h3 style="margin-bottom: 30px; font-size: 1.8rem;">Philosophy</h3>
+                        <ul class="philosophy-list">
+                            <li>Always Day 1 mentality: This approach keeps the company agile and innovative, as if it's
+                                still a startup, preventing bureaucracy and encouraging constant reinvention to stay
+                                ahead of competitors.</li>
+                            <li>Long-term over short-term gains: Amazon prioritizes investments that may not pay off
+                                immediately but build sustainable advantages, like developing new technologies or
+                                entering new markets.</li>
+                            <li>Invent on behalf of customers: The company focuses on solving customer problems before
+                                they even recognize them, leading to groundbreaking products like Kindle and Alexa.</li>
+                            <li>Embrace being misunderstood: Bold innovations often face skepticism, but Amazon persists
+                                if convinced it's right for customers, as with the initial launch of AWS.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Core Leadership Principles -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">Leadership Principles</h2>
+                <div class="principles-grid">
+                    <div class="principle-card">
+                        <h3>Customer Obsession</h3>
+                        <p class="principle-desc">Leaders start with the customer and work backwards.</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">Explanation: This principle
+                            means that every decision at Amazon begins with understanding what customers need or want,
+                            even if they haven't expressed it yet. It drives innovation by focusing on customer pain
+                            points and delighting them with solutions.</p>
+                        <p class="principle-example">Example: In meetings, an empty chair represents the customer,
+                            reminding participants to consider the customer's perspective in all discussions.</p>
+                    </div>
+                    <div class="principle-card">
+                        <h3>Invent & Simplify</h3>
+                        <p class="principle-desc">Seek new ideas and innovate constantly.</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">Explanation: Amazon encourages
+                            employees to invent new ways to serve customers and simplify complex processes, fostering a
+                            culture of continuous improvement and efficiency.</p>
+                        <p class="principle-example">Example: The 1-Click Ordering patent simplified the checkout
+                            process, reducing friction and increasing conversion rates in e-commerce.</p>
+                    </div>
+                    <div class="principle-card">
+                        <h3>Think Big</h3>
+                        <p class="principle-desc">Bold vision creates results; thinking small is limiting.</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">Explanation: Leaders are
+                            encouraged to set ambitious goals that inspire teams and lead to breakthrough innovations,
+                            rather than incremental changes.</p>
+                        <p class="principle-example">Example: Launching AWS when Amazon was primarily known as a
+                            bookstore transformed the company into a tech powerhouse.</p>
+                    </div>
+                    <div class="principle-card">
+                        <h3>Deliver Results</h3>
+                        <p class="principle-desc">Focus on key inputs and deliver with quality.</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">Explanation: This emphasizes
+                            accountability, ensuring that teams not only set goals but also execute them effectively,
+                            measuring success by outcomes.</p>
+                        <p class="principle-example">Example: Amazon's commitment to fast delivery, often meeting or
+                            exceeding promised timelines through optimized logistics and technology.</p>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 40px; opacity: 0.6; font-style: italic;">+ 12 more principles
+                    embedded in Amazon's DNA</p>
+            </div>
+        </section>
+
+        <!-- Slide 6: Technology Flow -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">Technology Pipeline</h2>
+                <div class="tech-pipeline">
+                    <div class="tech-node">
+                        <div class="tech-icon-circle">🧠</div>
+                        <div class="tech-label">AI/ML</div>
+                        <div class="tech-sublabel">Personalization</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Artificial Intelligence and Machine Learning power
+                            personalized recommendations, fraud detection, and predictive analytics, enhancing user
+                            experiences across Amazon's platforms.</p>
+                    </div>
+                    <div class="tech-arrow">→</div>
+                    <div class="tech-node">
+                        <div class="tech-icon-circle">🤖</div>
+                        <div class="tech-label">Robotics</div>
+                        <div class="tech-sublabel">Automation</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Robotics automate warehouse operations, improving
+                            efficiency in picking, packing, and shipping, reducing human error and speeding up
+                            fulfillment.</p>
+                    </div>
+                    <div class="tech-arrow">→</div>
+                    <div class="tech-node">
+                        <div class="tech-icon-circle">☁️</div>
+                        <div class="tech-label">AWS</div>
+                        <div class="tech-sublabel">Infrastructure</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">AWS provides the scalable cloud infrastructure that
+                            supports all of Amazon's operations and millions of external customers, enabling rapid
+                            innovation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Global Presence -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">Global Presence</h2>
+                <div class="map-container">
+                    <div class="map-dot dot-1"></div>
+                    <div class="map-dot dot-2"></div>
+                    <div class="map-dot dot-3"></div>
+                    <div class="map-dot dot-4"></div>
+                    <div class="map-dot dot-5"></div>
+                    <div class="map-dot dot-6"></div>
+                    <div class="map-dot dot-7"></div>
+                </div>
+                <div class="global-metrics">
+                    <div class="metric-item">
+                        <div class="metric-value" data-global="1500">0</div>
+                        <div class="metric-label">K+ Employees</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Over 1.5 million employees worldwide support
+                            Amazon's operations in technology, logistics, and customer service.</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" data-global="175">0</div>
+                        <div class="metric-label">Fulfillment Centers</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">More than 175 fulfillment centers globally enable
+                            fast shipping and efficient distribution.</p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" data-global="100">0</div>
+                        <div class="metric-label">AWS Regions</div>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">AWS operates in over 100 regions, providing
+                            low-latency cloud services worldwide.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Growth Impact & Challenges -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">Growth & Responsibility</h2>
+                <div class="challenge-split">
+                    <div class="challenge-section growth">
+                        <h3>Impact</h3>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-check">✓</div>
+                            <div>Revolutionized retail & cloud: Amazon transformed online shopping with vast selection
+                                and convenience, while AWS democratized cloud computing, enabling startups and
+                                enterprises to scale efficiently.</div>
+                        </div>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-check">✓</div>
+                            <div>Created millions of jobs: From warehouse workers to software engineers, Amazon has
+                                generated employment opportunities worldwide, boosting local economies.</div>
+                        </div>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-check">✓</div>
+                            <div>Innovation leadership: Amazon's investments in AI, robotics, and sustainability set
+                                industry standards, inspiring other companies to innovate.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-section issues">
+                        <h3>Challenges</h3>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-warning">⚠</div>
+                            <div>Labor practices scrutiny: Concerns over working conditions in warehouses, including
+                                high productivity demands and injury rates, have led to unions and regulations.</div>
+                        </div>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-warning">⚠</div>
+                            <div>Antitrust regulations: Accusations of monopolistic practices, such as favoring own
+                                products, have resulted in lawsuits and increased regulatory oversight.</div>
+                        </div>
+                        <div class="challenge-item">
+                            <div class="challenge-icon icon-warning">⚠</div>
+                            <div>Environmental impact: High carbon footprint from shipping and data centers prompts
+                                commitments to sustainability, but progress is monitored closely.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Future Vision -->
+        <section class="slide">
+            <div class="slide-content">
+                <h2 class="section-title">The Future</h2>
+                <div class="future-grid">
+                    <div class="future-card">
+                        <span class="future-icon">✨</span>
+                        <h3>Generative AI</h3>
+                        <p>Bedrock & Titan models transforming AWS and Alexa capabilities. These AI tools enable
+                            developers to build advanced applications, while enhancing voice assistants with more
+                            natural interactions and creative content generation.</p>
+                    </div>
+                    <div class="future-card">
+                        <span class="future-icon">🚀</span>
+                        <h3>Logistics 2.0</h3>
+                        <p>Drone delivery and same-hour shipping through hyper-local hubs. This evolution aims to make
+                            deliveries faster and more efficient, reducing costs and environmental impact with
+                            autonomous technologies.</p>
+                    </div>
+                    <div class="future-card">
+                        <span class="future-icon">🌱</span>
+                        <h3>Sustainability</h3>
+                        <p>The Climate Pledge: Net-zero carbon by 2040 commitment. Amazon is investing in renewable
+                            energy, electric vehicles, and sustainable packaging to minimize its ecological footprint.
+                        </p>
+                    </div>
+                </div>
+                <div class="vision-quote">
+                    "It's still Day 1" — Jeff Bezos
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 10: Closing Message -->
+        <section class="slide">
+            <div class="slide-content closing-hero">
+                <p class="closing-quote">
+                    "Customer obsession is not a strategy.<br>
+                    It's a <strong>culture</strong>."
+                </p>
+                <div class="closing-cta">
+                    <button class="restart-btn" id="restartBtn">Restart Presentation</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Particle Canvas Animation – subtle ambient effect
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 153, 0, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Presentation Logic
+        const slides = document.querySelectorAll('.slide');
+        const navDotsContainer = document.getElementById('navDots');
+        const currentNum = document.getElementById('current');
+        const totalNum = document.getElementById('total');
+        const progressCircle = document.querySelector('.progress');
+        const circumference = 2 * Math.PI * 26;
+
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        totalNum.textContent = totalSlides.toString().padStart(2, '0');
+
+        // Create navigation dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('nav-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            navDotsContainer.appendChild(dot);
+        }
+
+        const dots = document.querySelectorAll('.nav-dot');
+
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+
+            currentSlide = index;
+
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+
+            currentNum.textContent = (currentSlide + 1).toString().padStart(2, '0');
+
+            const progress = ((currentSlide + 1) / totalSlides) * circumference;
+            progressCircle.style.strokeDashoffset = circumference - progress;
+
+            // Trigger animated counters on relevant slides
+            if (currentSlide === 1) animateCounters('.stat-number');
+            if (currentSlide === 6) animateCounters('.metric-value');
+        }
+
+        function animateCounters(selector) {
+            const counters = document.querySelectorAll(selector);
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target') || counter.getAttribute('data-global'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const update = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.ceil(current);
+                        requestAnimationFrame(update);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                update();
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Mouse wheel navigation (with debounce)
+        let wheelTimeout;
+        document.addEventListener('wheel', (e) => {
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+                if (e.deltaY > 0) nextSlide();
+                else prevSlide();
+            }, 150);
+        });
+
+        // Restart button
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            goToSlide(0);
+        });
+
+        // Initialize progress ring for first slide
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = circumference - (1 / totalSlides) * circumference;
+    </script>
+</body>
+
+</html>
