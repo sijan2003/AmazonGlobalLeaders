@@ -232,6 +232,29 @@
             line-height: 1.4;
         }
 
+        .presenters {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .presented-by {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .presenter-names {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 8px;
+            background: linear-gradient(90deg, #ff9900, #ffc266);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+
         .accent-text {
             color: var(--primary);
             font-weight: 700;
@@ -1277,6 +1300,13 @@
                 </p>
                 <p style="font-size: 1.2rem; opacity: 0.7; margin-top: 20px;">From an Online Bookstore to a Global Tech
                     Giant</p>
+                <!-- Presentation By -->
+                <div class="presenters">
+                    <p class="presented-by">Presentation by</p>
+                    <p class="presenter-names">
+                        Aayush Poudel · Nishchal Pandit · Sijan Kshetri
+                    </p>
+                </div>
                 <div class="floating-hint">← Use Arrow Keys to Navigate →</div>
             </div>
         </section>
@@ -1416,6 +1446,8 @@
                                     Chairman, influencing strategy.</p>
                             </div>
                         </div>
+                        <!-- trigger github pages redeploy -->
+
                         <div class="leader-card">
                             <div class="leader-avatar">
                                 <img src="https://static01.nyt.com/images/2023/08/14/multimedia/00jassy-fwqh/fwqh-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
